@@ -12,6 +12,64 @@
 
 #include "get_next_line.h"
 
+char	*ft_put_in_str(int i, int i2, char **line, char *str)
+{
+	while ((*line)[i] != '\n')
+	i++;
+	(*line)[i] = '\0';
+	i++;
+	while ((*line)[i] != '\0')
+	{
+		i++;
+		i2++;
+	}
+	i = 0;
+	while ((*line)[i] != '\0')
+	{
+		i++;
+	}
+	i++;
+	str = ft_strnew(i2 - 1);
+	i2 = 0;
+	while ((*line)[i] != '\0')
+	{
+		str[i2] = (*line)[i];
+		i++;
+		i2++;
+	}
+	str[i2] = '\0';
+	return(str);
+}
+
+int		ft_str_is_null(int i, int fd, char *str, char **line)
+{
+	int ret;
+
+	ret = 0;
+	*line = ft_strnew(BUFF_SIZE + ft_strlen(str) - 1);
+	ret = read(fd, *line, BUFF_SIZE);
+	*line = ft_strjoin(str, *line);
+	(*line)[BUFF_SIZE + ft_strlen(str)] = '\0';
+	while (ft_strchr(*line, 10) == NULL && BUFF_SIZE + ft_strlen(str) ==
+			ft_strlen(*line))
+	{
+		tmp = ft_strnew(BUFF_SIZE);
+		ret = read(fd, tmp, BUFF_SIZE);
+		tmp[BUFF_SIZE + 1] = '\0';
+		tmp2 = ft_strnew(ft_strlen(*line) + ft_strlen(tmp) - 2);
+		tmp2 = ft_strcpy(tmp2, *line);
+		*line = ft_strnew(ft_strlen(tmp2) + ft_strlen(tmp) - 2);
+		*line = ft_strjoin(tmp2, tmp);
+		i++;
+	}
+	if (ft_strchr(*line, 10) != NULL)
+	{
+		str = ft_put_in_str(0, 0, line, str);
+		return (1);
+	}
+	return (0);
+}
+
 int				get_next_line(int const fd, char **line)
 {
 	static char *str;
@@ -28,20 +86,11 @@ int				get_next_line(int const fd, char **line)
 	ret = 0;
 	if (str == NULL)
 	{
-//		ft_putchar('1');
 		*line = ft_strnew(BUFF_SIZE);
-//		ft_putchar('2');
-//		ft_putchar('3');
 		ret = read(fd, *line, BUFF_SIZE);
-//		ft_putchar('4');
 		(*line)[BUFF_SIZE + 1] = '\0';
-//		ft_putchar('5');
-//		ft_putchar(' ');
-//		ft_putnbr(ft_strlen(*line));
-//		ft_putchar(' ');
 		while (ft_strchr(*line, 10) == NULL && BUFF_SIZE * i == ft_strlen(*line))
 		{
-//			ft_putchar('6');
 			tmp = ft_strnew(BUFF_SIZE);
 			ret = read(fd, tmp, BUFF_SIZE);
 			tmp[BUFF_SIZE + 1] = '\0';
@@ -49,39 +98,12 @@ int				get_next_line(int const fd, char **line)
 			tmp2 = ft_strcpy(tmp2, *line);
 			*line = ft_strnew(ft_strlen(tmp2) + ft_strlen(tmp) - 2);
 			*line = ft_strjoin(tmp2, tmp);
-//			ft_putchar(' ');
-//			ft_putnbr(ft_strlen(*line));
-//			ft_putchar(' ');
 			i++;
 		}
 		if (ft_strchr(*line, 10) != NULL)
 		{
-			i = 0;
-			while ((*line)[i] != '\n')
-				i++;
-			(*line)[i] = '\0';
-			i++;
-			while ((*line)[i] != '\0')
-			{
-				i++;
-				i2++;
-			}
-			i = 0;
-			while ((*line)[i] != '\0')
-			{
-				i++;
-			}
-			i++;
-			str = ft_strnew(i2 - 1);
-			i2 = 0;
-			while ((*line)[i] != '\0')
-			{
-				str[i2] = (*line)[i];
-				i++;
-				i2++;
-			}
-			str[i2] = '\0';
-			return (1);
+			str = ft_put_in_str(0, 0, line, str);
+			return(1);
 		}
 		if (BUFF_SIZE * i != ft_strlen(*line))
 		{
@@ -97,7 +119,6 @@ int				get_next_line(int const fd, char **line)
 		while (ft_strchr(*line, 10) == NULL && BUFF_SIZE + ft_strlen(str) ==
 				ft_strlen(*line))
 		{
-//			ft_putchar('6');
 			tmp = ft_strnew(BUFF_SIZE);
 			ret = read(fd, tmp, BUFF_SIZE);
 			tmp[BUFF_SIZE + 1] = '\0';
@@ -105,38 +126,11 @@ int				get_next_line(int const fd, char **line)
 			tmp2 = ft_strcpy(tmp2, *line);
 			*line = ft_strnew(ft_strlen(tmp2) + ft_strlen(tmp) - 2);
 			*line = ft_strjoin(tmp2, tmp);
-//			ft_putchar(' ');
-//			ft_putnbr(ft_strlen(*line));
-//			ft_putchar(' ');
 			i++;
 		}
 		if (ft_strchr(*line, 10) != NULL)
 		{
-			i = 0;
-			while ((*line)[i] != '\n')
-				i++;
-			(*line)[i] = '\0';
-			i++;
-			while ((*line)[i] != '\0')
-			{
-				i++;
-				i2++;
-			}
-			i = 0;
-			while ((*line)[i] != '\0')
-			{
-				i++;
-			}
-			i++;
-			str = ft_strnew(i2 - 1);
-			i2 = 0;
-			while ((*line)[i] != '\0')
-			{
-				str[i2] = (*line)[i];
-				i++;
-				i2++;
-			}
-			str[i2] = '\0';
+			str = ft_put_in_str(0, 0, line, str);
 			return (1);
 		}
 		if (BUFF_SIZE + ft_strlen(str) != ft_strlen(*line))
