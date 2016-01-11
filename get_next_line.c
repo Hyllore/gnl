@@ -6,16 +6,16 @@
 /*   By: droly <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/30 11:55:39 by droly             #+#    #+#             */
-/*   Updated: 2016/01/08 16:10:49 by droly            ###   ########.fr       */
+/*   Updated: 2016/01/11 17:44:10 by droly            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_put_in_str(int i, int i2, char **line, char *str)
+char			*ft_put_in_str(int i, int i2, char **line, char *str)
 {
 	while ((*line)[i] != '\n')
-	i++;
+		i++;
 	(*line)[i] = '\0';
 	i++;
 	while ((*line)[i] != '\0')
@@ -25,11 +25,9 @@ char	*ft_put_in_str(int i, int i2, char **line, char *str)
 	}
 	i = 0;
 	while ((*line)[i] != '\0')
-	{
 		i++;
-	}
 	i++;
-	str = ft_strnew(i2 - 1);
+	str = ft_strnew(i2);
 	i2 = 0;
 	while ((*line)[i] != '\0')
 	{
@@ -38,121 +36,61 @@ char	*ft_put_in_str(int i, int i2, char **line, char *str)
 		i2++;
 	}
 	str[i2] = '\0';
-	return(str);
+	return (str);
 }
 
-int		ft_str_is_null(int i, int fd, char *str, char **line)
+int				ft_str_is_null(int i, int fd, char **str, char **line)
 {
-	int ret;
+	char		*tmp;
+	char		*tmp2;
+	int			ret;
 
-	ret = 0;
-	*line = ft_strnew(BUFF_SIZE + ft_strlen(str) - 1);
-	ret = read(fd, *line, BUFF_SIZE);
-	*line = ft_strjoin(str, *line);
-	(*line)[BUFF_SIZE + ft_strlen(str)] = '\0';
-	while (ft_strchr(*line, 10) == NULL && BUFF_SIZE + ft_strlen(str) ==
-			ft_strlen(*line))
+	ret = i;
+	i = 0;
+	while (ft_strchr(*line, 10) == NULL && ret > 0)
 	{
 		tmp = ft_strnew(BUFF_SIZE);
 		ret = read(fd, tmp, BUFF_SIZE);
-		tmp[BUFF_SIZE + 1] = '\0';
-		tmp2 = ft_strnew(ft_strlen(*line) + ft_strlen(tmp) - 2);
+		tmp[ret] = '\0';
+		tmp2 = ft_strnew(ft_strlen(*line) + ft_strlen(tmp));
 		tmp2 = ft_strcpy(tmp2, *line);
-		*line = ft_strnew(ft_strlen(tmp2) + ft_strlen(tmp) - 2);
 		*line = ft_strjoin(tmp2, tmp);
+		free(tmp2);
+		free(tmp);
 		i++;
 	}
 	if (ft_strchr(*line, 10) != NULL)
 	{
-		str = ft_put_in_str(0, 0, line, str);
+		*str = ft_put_in_str(0, 0, line, *str);
 		return (1);
 	}
-	return (0);
+	return (ret);
 }
 
 int				get_next_line(int const fd, char **line)
 {
-	static char *str;
-	int ret;
-	char *tmp;
-	int i;
-	char *tmp2;
-	int i2;
+	static char	*str = NULL;
+	int			ret;
 
-	i2 = 0;
-	tmp2 = NULL;
-	i = 1;
-	tmp = NULL;
 	ret = 0;
 	if (str == NULL)
 	{
 		*line = ft_strnew(BUFF_SIZE);
 		ret = read(fd, *line, BUFF_SIZE);
-		(*line)[BUFF_SIZE + 1] = '\0';
-		while (ft_strchr(*line, 10) == NULL && BUFF_SIZE * i == ft_strlen(*line))
-		{
-			tmp = ft_strnew(BUFF_SIZE);
-			ret = read(fd, tmp, BUFF_SIZE);
-			tmp[BUFF_SIZE + 1] = '\0';
-			tmp2 = ft_strnew(BUFF_SIZE + ft_strlen(tmp) - 1);
-			tmp2 = ft_strcpy(tmp2, *line);
-			*line = ft_strnew(ft_strlen(tmp2) + ft_strlen(tmp) - 2);
-			*line = ft_strjoin(tmp2, tmp);
-			i++;
-		}
-		if (ft_strchr(*line, 10) != NULL)
-		{
-			str = ft_put_in_str(0, 0, line, str);
-			return(1);
-		}
-		if (BUFF_SIZE * i != ft_strlen(*line))
-		{
-			return (0);
-		}
+		(*line)[ret] = '\0';
+		ret = ft_str_is_null(ret, fd, &str, line);
+		return (ret);
 	}
 	if (str != NULL)
 	{
-		*line = ft_strnew(BUFF_SIZE + ft_strlen(str) - 1);
+		*line = ft_strnew(BUFF_SIZE + ft_strlen(str));
 		ret = read(fd, *line, BUFF_SIZE);
 		*line = ft_strjoin(str, *line);
-		(*line)[BUFF_SIZE + ft_strlen(str)] = '\0';
-		while (ft_strchr(*line, 10) == NULL && BUFF_SIZE + ft_strlen(str) ==
-				ft_strlen(*line))
-		{
-			tmp = ft_strnew(BUFF_SIZE);
-			ret = read(fd, tmp, BUFF_SIZE);
-			tmp[BUFF_SIZE + 1] = '\0';
-			tmp2 = ft_strnew(ft_strlen(*line) + ft_strlen(tmp) - 2);
-			tmp2 = ft_strcpy(tmp2, *line);
-			*line = ft_strnew(ft_strlen(tmp2) + ft_strlen(tmp) - 2);
-			*line = ft_strjoin(tmp2, tmp);
-			i++;
-		}
-		if (ft_strchr(*line, 10) != NULL)
-		{
-			str = ft_put_in_str(0, 0, line, str);
-			return (1);
-		}
-		if (BUFF_SIZE + ft_strlen(str) != ft_strlen(*line))
-		{
-			return (0);
-		}
+		(*line)[ret + ft_strlen(str)] = '\0';
+		free(str);
+		str = NULL;
+		ret = ft_str_is_null(ret, fd, &str, line);
+		return (ret);
 	}
 	return (0);
-}
-
-int main(int argc, char **argv)
-{
-	int fd;
-	char *line;
-
-	line = NULL;
-	if (argc != 2)
-		return(0);
-	fd = open(argv[1], O_RDONLY);
-	while (get_next_line(fd, &line) > 0)
-	{
-//		sleep(1);
-		ft_putendl(line);
-	}
 }
