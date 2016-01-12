@@ -6,7 +6,7 @@
 /*   By: droly <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/11 17:44:52 by droly             #+#    #+#             */
-/*   Updated: 2016/01/11 17:45:21 by droly            ###   ########.fr       */
+/*   Updated: 2016/01/12 17:19:51 by droly            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,25 @@ int main(int argc, char **argv)
 	char *line;
 
 	line = NULL;
-	if (argc != 2)
-		return(0);
-	fd = open(argv[1], O_RDONLY);
-	while (get_next_line(fd, &line) > 0)
+	if (argc == 2)
 	{
-//		sleep(1);
-		ft_putendl(line);
-		free(line);
+		fd = open(argv[1], O_RDONLY);
+		while (get_next_line(fd, &line) > 0)
+		{
+//			sleep(1);
+			ft_putendl(line);
+			free(line);
+		}
 	}
-	while (1)
-		;
+	else
+	{
+		while (get_next_line(0, &line) > 0)
+		{
+//			sleep(1);
+			ft_putendl(line);
+			free(line);
+		}
+	}
+//	while (1)
+//		;
 }

@@ -6,13 +6,14 @@
 #    By: aboucher <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/09 14:31:39 by aboucher          #+#    #+#              #
-#    Updated: 2016/01/11 17:46:25 by droly            ###   ########.fr        #
+#    Updated: 2016/01/12 17:00:31 by droly            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = gnl
 
-SRC = get_next_line.c
+SRC = get_next_line.c \
+      main.c
 
 OBJ = $(SRC:.c=.o)
 
